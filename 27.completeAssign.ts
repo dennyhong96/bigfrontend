@@ -13,3 +13,5 @@ function completeAssign(target: any, ...sources: any[]): object {
   }
   return target;
 }
+
+export {};

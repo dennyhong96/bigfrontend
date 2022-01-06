@@ -53,3 +53,5 @@ function objectAssign2(target: any, ...sources: any[]): object {
   }
   return target;
 }
+
+export {};

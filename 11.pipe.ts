@@ -5,3 +5,5 @@ function pipe<T>(funcs: Array<(arg: T) => T>) {
     }, arg);
   };
 }
+
+export {};

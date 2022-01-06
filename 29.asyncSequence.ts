@@ -47,3 +47,5 @@ const asyncTimes4 = sequence([asyncTimes2, asyncTimes2]);
 asyncTimes4((error, data) => {
   console.log(data); // 4
 }, 1);
+
+export {};

@@ -5,3 +5,5 @@ function clearAllTimeout() {
     timeoutId--;
   }
 }
+
+export {};
