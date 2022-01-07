@@ -32,13 +32,13 @@ function racePromise<T>(funcs: AsyncFunc<T>[]) {
       promise
         .then((data) => {
           if (hasWinner) return;
-          finalCallback(undefined, data);
           hasWinner = true;
+          finalCallback(undefined, data);
         })
         .catch((error) => {
           if (hasWinner) return;
-          finalCallback(error, undefined);
           hasWinner = true;
+          finalCallback(error, undefined);
         });
     });
   };

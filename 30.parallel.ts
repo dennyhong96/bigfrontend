@@ -5,50 +5,54 @@ type AsyncFunc<T> = (callback: Callback<T>) => void;
 function parallel<T>(funcs: AsyncFunc<T>[]) {
   return function (finalCallback: Callback<T[]>) {
     const result: T[] = [];
-    let hasError = false;
-    for (const func of funcs) {
-      func((err, data) => {
-        if (hasError) return;
-        if (err) {
-          hasError = true;
-          return finalCallback(err, undefined);
+    let resultCount = 0;
+    let errorOccured = false;
+    funcs.forEach((func, index) => {
+      func((error, data) => {
+        if (errorOccured) return;
+        if (error) {
+          errorOccured = true;
+          return finalCallback(error, undefined);
         }
-        result.push(data!);
-        if (result.length === funcs.length) {
+        result[index] = data!;
+        resultCount++;
+        if (resultCount === funcs.length) {
           return finalCallback(undefined, result);
         }
       });
-    }
+    });
   };
 }
 
 function parallelPromise<T>(funcs: AsyncFunc<T>[]) {
   const promisify = (fn: AsyncFunc<T>): Promise<T> => {
-    return new Promise((resolve, reject) => {
+    return new Promise((res, rej) => {
       fn((error, data) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        resolve(data!);
+        if (error) return rej(error);
+        res(data!);
       });
     });
   };
-  return async function (finalCallback: Callback<T[]>) {
+  return function (finalCallback: Callback<T[]>) {
     const result: T[] = [];
-    for (const func of funcs) {
-      const promise = promisify(func);
-      try {
-        const data = await promise;
-        result.push(data);
-        if (result.length === funcs.length) {
-          finalCallback(undefined, result);
-        }
-      } catch (err) {
-        finalCallback(err as Error, undefined);
-        break;
-      }
-    }
+    let resultCount = 0;
+    let errorOccured = false;
+    funcs.forEach((func, index) => {
+      promisify(func)
+        .then((data) => {
+          if (errorOccured) return;
+          result[index] = data;
+          resultCount++;
+          if (resultCount === funcs.length) {
+            finalCallback(undefined, result);
+          }
+        })
+        .catch((error) => {
+          if (errorOccured) return;
+          errorOccured = true;
+          finalCallback(error, undefined);
+        });
+    });
   };
 }
 
