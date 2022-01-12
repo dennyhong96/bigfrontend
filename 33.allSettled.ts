@@ -38,6 +38,7 @@ function allSettled(
   });
 }
 
+// Example
 const promises = [
   Promise.reject("error1"),
   Promise.resolve(1),
