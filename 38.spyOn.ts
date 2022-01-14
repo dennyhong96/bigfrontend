@@ -1,7 +1,3 @@
-/**
- * @param {object} obj
- * @param {string} methodName
- */
 function spyOn(obj: Record<string, any>, methodName: string) {
   const originalMethod = obj[methodName];
   if (!originalMethod && typeof originalMethod !== "function") {

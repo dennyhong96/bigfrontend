@@ -2,6 +2,9 @@ function range(from: number, to: number): number[] {
   return Array.from({ length: to - from + 1 }).map((_, index) => index + from);
 }
 
+// Below solutions don't need space to store the whole result array in memory,
+// Better for larger results
+
 // for...of... uses Iteration protocols -
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterator_protocol
 function range2(from: number, to: number) {
