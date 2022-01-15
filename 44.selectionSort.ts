@@ -1,3 +1,4 @@
+// O(n^2) time; O(1) space
 function selectionSort(arr: number[]): void {
   for (let i = 0; i < arr.length - 1; i++) {
     let minIndex = i;

@@ -1,6 +1,6 @@
-// O(nlogn) time; O(n) space;
+// O(nlogn) time; O(logn) space(call stack);
 function mergeSort(arr: number[], startIndex = 0, endIndex = arr.length - 1) {
-  if (!arr.length || endIndex === startIndex) return;
+  if (!arr.length || endIndex <= startIndex) return;
   const middleIndex = startIndex + Math.floor((endIndex - startIndex) / 2);
   mergeSort(arr, startIndex, middleIndex);
   mergeSort(arr, middleIndex + 1, endIndex);
