@@ -9,9 +9,8 @@ function quickSort(
   let currIndex = startIndex;
   let pivotIndex = endIndex; // randomly select last num as pivot
 
-  // `while (currIndex < pivotIndex)` since we are sure that items behind pivot number are larger than pivot
-  // while loop breaks off when currIndex = pivotIndex = the correct index of pivotNum
-  // Everything smaller than pivot are to the left of it, everything larger to the right
+  // while loop breaks off when currIndex === pivotIndex
+  // at this point pivot is garrantied to be at the correct position
   while (currIndex < pivotIndex) {
     const pivotNum = arr[pivotIndex];
     const currNum = arr[currIndex];
