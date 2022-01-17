@@ -115,4 +115,4 @@ console.log(pq.peek()); // 2 is the smallest now, this returns 2
 console.log(pq.poll()); // 2 is removed, only 5 is left
 console.log(pq);
 
-export {};
+export { PriorityQueue };
