@@ -7,6 +7,7 @@ class Node {
   }
 }
 
+// Iterative - O(n) time; O(1) space;
 const reverseLinkedList = (list: Node): Node => {
   let head = list;
   let curr = head;
@@ -19,11 +20,12 @@ const reverseLinkedList = (list: Node): Node => {
   return head;
 };
 
-const reverseLinkedList1 = (currNode?: Node): Node | undefined => {
-  if (!currNode || !currNode.next) return currNode;
-  const newHead = reverseLinkedList1(currNode.next);
-  currNode.next.next = currNode;
-  currNode.next = null;
+// Recursive - O(n) time; O(n) space;
+const reverseLinkedList1 = (head: Node | null): Node | null => {
+  if (!head || !head.next) return head;
+  const newHead = reverseLinkedList(head.next);
+  head.next.next = head;
+  head.next = null;
   return newHead;
 };
 
