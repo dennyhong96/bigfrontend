@@ -8,7 +8,34 @@ interface IFetchListResult {
 
 declare function fetchList(id?: number): Promise<IFetchListResult>;
 
-const fetchListWithAmount = async (
+// https://thecodebarbarian.com/async-generator-functions-in-javascript.html
+const fetchListWithAmount = async (amount = 5) => {
+  let results: IItem[] = [];
+
+  // The cleanest way to loop through an entire async generator function is using a for/await/of loop.
+  for await (const items of fetchListGenerator()) {
+    if (results.length + items.length > amount) {
+      results.push(...items.slice(0, amount - results.length));
+    } else {
+      results.push(...items);
+    }
+  }
+  return results;
+};
+
+async function* fetchListGenerator() {
+  let id: number | undefined = undefined;
+  while (true) {
+    const res: IFetchListResult = await fetchList(id);
+    const items = res.items;
+    if (!items.length) return;
+    id = items[items.length - 1].id;
+    yield items;
+  }
+}
+
+// Recursive
+const fetchListWithAmount1 = async (
   amount = 5,
   results: IItem[] = []
 ): Promise<IItem[]> => {
@@ -20,10 +47,11 @@ const fetchListWithAmount = async (
     if (!items.length) return results;
     results.push(...items);
   }
-  return await fetchListWithAmount(amount, results);
+  return await fetchListWithAmount1(amount, results);
 };
 
-const fetchListWithAmount1 = async (amount = 5): Promise<IItem[]> => {
+// Iterative
+const fetchListWithAmount2 = async (amount = 5): Promise<IItem[]> => {
   const result: IItem[] = []; // 5
   while (result.length < amount) {
     const id: number | undefined = result[result.length - 1]?.id;
