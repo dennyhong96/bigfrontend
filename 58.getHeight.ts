@@ -5,8 +5,17 @@ function getHeight(tree: Element): number {
   return 1 + Math.max(...[...tree.children].map((child) => getHeight(child)));
 }
 
-// Iterative BFS - O(n) time; O(n) space;
 function getHeight1(tree: Element): number {
+  let maxHeight = 0;
+  if (!tree) return maxHeight;
+  for (const child of tree.children) {
+    maxHeight = Math.max(maxHeight, getHeight1(child));
+  }
+  return 1 + maxHeight;
+}
+
+// Iterative BFS - O(n) time; O(n) space;
+function getHeight2(tree: Element): number {
   const queue: Element[] = [];
   queue.push(tree);
   let height = 0;
@@ -15,7 +24,9 @@ function getHeight1(tree: Element): number {
     const levelElementsCount = queue.length;
     for (let i = 0; i < levelElementsCount; i++) {
       const element = queue.shift()!;
-      [...element.children].forEach((child) => queue.push(child));
+      for (const child of element.children) {
+        queue.push(child);
+      }
     }
   }
   return height;
