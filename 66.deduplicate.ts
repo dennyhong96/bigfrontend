@@ -1,4 +1,4 @@
-// O(n) time; O(n) space;
+// O(nlogn) time; O(1) space;
 function deduplicate(arr: unknown[]): void {
   arr.sort(); // make duplicates besides each other
 
