@@ -9,6 +9,7 @@ function model(state: { value: string }, element: HTMLInputElement) {
   });
 }
 
+// Example
 const input = document.createElement("input");
 const state = { value: "BFE" };
 model(state, input);
