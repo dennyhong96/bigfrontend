@@ -75,3 +75,5 @@ setTimeout(() => {
   // ok we only subscribe for 100ms
   sub.unsubscribe();
 }, 100);
+
+export { Observable };
