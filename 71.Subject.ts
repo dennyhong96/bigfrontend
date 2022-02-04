@@ -17,7 +17,8 @@ class Subject<T> {
     };
   }
 
-  public next = (val: T) => {
+  public next(val: T) {
+    console.log(this);
     this.subcribersMap.forEach((subscriber) => {
       if (typeof subscriber === "function") {
         subscriber(val);
@@ -25,28 +26,43 @@ class Subject<T> {
         subscriber.next?.(val);
       }
     });
-  };
+  }
 
-  public error = (err: any) => {
+  public error(err: any) {
     this.subcribersMap.forEach((subscriber) => {
       if (typeof subscriber === "function") return;
       subscriber.error?.(err);
     });
-  };
+  }
 
-  public complete = () => {
+  public complete() {
     this.subcribersMap.forEach((subscriber) => {
       if (typeof subscriber === "function") return;
       subscriber.complete?.();
     });
-  };
+  }
 }
 
 // Example
 const result: number[] = [];
-const log = (item: number) => result.push(item);
+// const log = (item: number) => result.push(item);
+const log = {
+  next(val: number) {
+    result.push(val);
+  },
+  error(err: any) {
+    console.error(err);
+  },
+  complete() {
+    console.log("complete");
+  },
+};
 const subject = new Subject<number>();
-const sub1 = subject.subscribe(log);
+const sub1 = subject.subscribe({
+  next(val) {
+    result.push(val);
+  },
+});
 const sub2 = subject.subscribe(log);
 const sub3 = subject.subscribe(log);
 
