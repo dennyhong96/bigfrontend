@@ -1,54 +1,43 @@
 import { Observable, Observer } from "./57.Observable";
 
-interface ISub<T> {
-  subscriber: Observer<T>;
-  unsubed: boolean;
-}
-
 class Subject<T> {
-  private subscribers: ISub<T>[];
+  private subcribersMap: Map<Symbol, Observer<T>>;
 
   constructor() {
-    this.subscribers = [];
+    this.subcribersMap = new Map<Symbol, Observer<T>>();
   }
 
-  subscribe(subscriber: Observer<T>) {
-    const sub: ISub<T> = {
-      subscriber,
-      unsubed: false,
-    };
-    this.subscribers.push(sub);
+  public subscribe(subscriber: Observer<T>) {
+    const key = Symbol();
+    this.subcribersMap.set(key, subscriber);
     return {
       unsubscribe: () => {
-        sub.unsubed = true;
+        this.subcribersMap.delete(key);
       },
     };
   }
 
-  next = (val: T) => {
-    this.subscribers.forEach((sub) => {
-      if (sub.unsubed) return;
-      if (typeof sub.subscriber === "function") {
-        sub.subscriber(val);
+  public next = (val: T) => {
+    this.subcribersMap.forEach((subscriber) => {
+      if (typeof subscriber === "function") {
+        subscriber(val);
       } else {
-        sub.subscriber.next?.(val);
+        subscriber.next?.(val);
       }
     });
   };
 
-  error = (err: any) => {
-    this.subscribers.forEach((sub) => {
-      if (sub.unsubed) return;
-      if (typeof sub.subscriber === "function") return;
-      sub.subscriber.error?.(err);
+  public error = (err: any) => {
+    this.subcribersMap.forEach((subscriber) => {
+      if (typeof subscriber === "function") return;
+      subscriber.error?.(err);
     });
   };
 
-  complete = () => {
-    this.subscribers.forEach((sub) => {
-      if (sub.unsubed) return;
-      if (typeof sub.subscriber === "function") return;
-      sub.subscriber.complete?.();
+  public complete = () => {
+    this.subcribersMap.forEach((subscriber) => {
+      if (typeof subscriber === "function") return;
+      subscriber.complete?.();
     });
   };
 }
