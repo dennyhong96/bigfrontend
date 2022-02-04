@@ -1,13 +1,13 @@
-interface IObserver<T = any> {
+export interface IObserver<T = any> {
   next?: (value: T) => void;
   error?: (error: any) => void;
   complete?: () => void;
 }
-type ObserverFn<T = any> = (value: T) => void;
-type Observer<T = any> = IObserver<T> | ObserverFn<T>;
-type SetupFunction<T> = (observer: Required<IObserver<T>>) => void;
+export type ObserverFn<T = any> = (value: T) => void;
+export type Observer<T = any> = IObserver<T> | ObserverFn<T>;
+export type SetupFunction<T> = (observer: Required<IObserver<T>>) => void;
 
-class Observable<T = any> {
+export class Observable<T = any> {
   private setup: SetupFunction<T>;
 
   constructor(setup: SetupFunction<T>) {
@@ -46,6 +46,7 @@ class Observable<T = any> {
   }
 }
 
+// Example
 const observable = new Observable<number>((subscriber: Required<IObserver>) => {
   subscriber.next(1);
   subscriber.next(2);
@@ -75,5 +76,3 @@ setTimeout(() => {
   // ok we only subscribe for 100ms
   sub.unsubscribe();
 }, 100);
-
-export { Observable };

@@ -1,6 +1,6 @@
 import { Observable } from "./57.Observable";
 
-function from(
+export function from(
   input: Array<any> | ArrayLike<any> | Promise<any> | Iterable<any> | Observable
 ): Observable {
   // Handle Promise
@@ -54,5 +54,3 @@ function from(
 
   throw new Error();
 }
-
-export {};
