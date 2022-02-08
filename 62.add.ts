@@ -1,4 +1,4 @@
-function add(num1: string, num2: string) {
+export function add(num1: string, num2: string) {
   const num1Arr = num1.split("");
   const num2Arr = num2.split("");
   let result = "";
@@ -16,5 +16,3 @@ function add(num1: string, num2: string) {
 
 // Example
 console.log(add("999999999999999999", "1"));
-
-export {};
