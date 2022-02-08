@@ -1,5 +1,5 @@
-import { add } from "./62.add";
-import { subtract } from "./75.subtract";
+import { add as addAbs } from "./62.add";
+import { subtract as subtractAbs } from "./75.subtract";
 
 function addWithSign(num1: string, num2: string): string {
   const isNum1Negetive = num1[0] === "-";
@@ -11,9 +11,9 @@ function addWithSign(num1: string, num2: string): string {
 
   // handle case 1
   if (isNum1Negetive === isNum2Negetive) {
-    return `${isNum1Negetive ? "-" : ""}${add(num1, num2)}`;
+    return `${isNum1Negetive ? "-" : ""}${addAbs(num1, num2)}`;
   } else {
-    const res = subtract(num1, num2);
+    const res = subtractAbs(num1, num2);
     if (isNum1Negetive && res[0] === "-") {
       return res.slice(1);
     } // handle case 2.1.1

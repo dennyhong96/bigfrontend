@@ -24,7 +24,7 @@ export function subtract(num1: string, num2: string): string {
     result = result.slice(1);
   }
 
-  return isNegetive ? `-${result}` : result;
+  return isNegetive ? `-${result}` : result; // handle negetive
 }
 
 // Returns true if num1 is smaller than num2.
