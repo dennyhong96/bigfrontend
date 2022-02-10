@@ -98,10 +98,6 @@ export class MyURLSearchParams {
   }
 
   public *values(): Generator<string> {
-    // const values = this.queryMap.values();
-    // for (const value of values) {
-    //   yield value;
-    // }
     const entries = this.queryMap.entries();
     let value: string[] | null = null;
     while ((value = entries.next().value)) {
@@ -113,6 +109,7 @@ export class MyURLSearchParams {
   }
 }
 
+// Example
 const params = new MyURLSearchParams("?a=1&a=2&b=2");
 params.get("a"); // '1'
 params.getAll("a"); // ['1', '2']
@@ -122,5 +119,3 @@ params.getAll("b"); // ['2']
 params.append("a", 3);
 params.set("b", "3");
 params.toString(); // 'a=1&a=2&b=3&a=3'
-
-export {};
