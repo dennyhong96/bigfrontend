@@ -1,32 +1,38 @@
 export type Interval = [number, number];
 
-// Sort & faltten array - O(n*mlogn*m) time; O(n*m) space;
+// Sort & faltten array - O((n*m)logn) time; O(n*m) space;
 export function findMeetingSlots(schedules: Interval[][]) {
-  const busyIntervals = schedules.flat(); // O(n*m) time; O(n*m) space
-  busyIntervals.sort((intervalA, intervalB) => {
-    const [start1, end1] = intervalA;
-    const [start2, end2] = intervalB;
-    if (start1 - start2 < 0) return -1;
-    if (start1 - start2 > 0) return 1;
-    return end1 - end2 < 0 ? -1 : 1;
-  }); // O(n*mlogn*m)
+  const busyIntervals = schedules.flat();
+  busyIntervals.sort((a, b) => {
+    // Compare start hour, if same, compare end hour
+    if (a[0] - b[0] < 0) {
+      return -1;
+    } else if (a[0] - b[0] > 0) {
+      return 1;
+    } else {
+      if (a[1] - b[1] < 0) {
+        return -1;
+      } else {
+        return 1;
+      }
+    }
+  }); // O((n*m)logn)
   // [[8, 9],[10, 13],[11, 12],[13, 15],[13, 18]]
 
-  let latestAvailableHour = 0;
-  const result: Interval[] = [];
-  busyIntervals.forEach((interval) => {
-    const [busyStart, busyEnd] = interval;
-    if (latestAvailableHour < busyStart) {
-      result.push([latestAvailableHour, busyStart]);
+  const availableSlots = [];
+  let lastBusyEndHour = 0;
+  for (let i = 0; i < busyIntervals.length; i++) {
+    const [busyStart, busyEnd] = busyIntervals[i];
+    if (lastBusyEndHour < busyStart) {
+      availableSlots.push([lastBusyEndHour, busyStart]);
     }
-    latestAvailableHour = Math.max(latestAvailableHour, busyEnd);
-  }); // O(n*m) time;
+    lastBusyEndHour = Math.max(lastBusyEndHour, busyEnd);
+  } // O(n*m) time;
 
-  if (latestAvailableHour !== 24) {
-    result.push([latestAvailableHour, 24]);
+  if (lastBusyEndHour !== 24) {
+    availableSlots.push([lastBusyEndHour, 24]);
   }
-
-  return result;
+  return availableSlots;
 }
 
 // Example
