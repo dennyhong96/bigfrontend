@@ -7,6 +7,7 @@ function nextRightSibling(
     return target.nextElementSibling as HTMLElement;
   }
 
+  // Keep finding parent's next right sibling that has a firstElementChild
   let parent = target.parentElement;
   while (parent) {
     const parentNext = nextRightSibling(root, parent);
