@@ -1,4 +1,3 @@
-// copied from lib.es5.d.ts
 declare interface Array<T> {
   myReduce(
     callbackfn: (
@@ -29,27 +28,26 @@ declare interface Array<T> {
 }
 
 Array.prototype.myReduce = function (...args: any[]) {
-  const hasInitialValue = args.length > 1; // handle user explicitly passes in undefined as initialValue
+  // user can omit initialValue, but they can also pass in undefined as initialValue explicitly
+  // the way we can check if user passed in an initialValue is by looknig at args length
+  let hasInitialValue = args.length > 1;
 
-  if (!hasInitialValue && this.length === 0) throw new Error(); // throw when array is empty and no initialValue passed in
+  // need to throw per spec
+  if (!hasInitialValue && this.length === 0) throw new Error();
 
   const callbackFn = args[0];
   let initialValue = args[1];
-
   let index = 0;
   if (!hasInitialValue) {
-    index = 1;
-    initialValue = this[0]; // use the first element as initialValue when user doesn't pass one in
+    initialValue = this[0]; // use the first element as initialValue if user doesn't pass one in
+    index = 1; // starts off the loop at the second element
   }
 
-  for (; index < this.length; index++) {
-    initialValue = callbackFn(initialValue, this[index], index, this);
+  const length = this.length; // handle edge case where callbackFn could modify array length
+  for (; index < length; index++) {
+    const element = this[index];
+    initialValue = callbackFn(initialValue, element, index, this);
   }
 
   return initialValue;
 };
-
-// Example
-[1, 2, 3].myReduce((acc, cur) => {
-  return acc + cur;
-}, 0); // 6

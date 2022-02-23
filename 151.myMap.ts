@@ -9,11 +9,12 @@ Array.prototype.myMap = function <T, U>(
   callbackfn: (value: T, index: number, array: T[]) => U,
   thisArg?: any
 ): U[] {
-  const len = this.length; // Prevent callback changing array length causing infinite loop
   const result: U[] = [];
-  for (let i = 0; i < len; i++) {
-    if (!(i in this)) continue; // need to skip empty elements in a sparse input array
-    result[i] = callbackfn.call(thisArg, this[i], i, this);
+  const length = this.length; // handle edge case where callbackFn modifies the array
+  for (let i = 0; i < length; i++) {
+    if (!(i in this)) continue; // handle edge case where array is sparse with empty slots, skip those
+    const element = this[i];
+    result[i] = callbackfn.call(thisArg, element, i, this);
   }
   return result;
 };
