@@ -113,7 +113,7 @@ function handleSpecificError(
   closeTagStart: number
 ): void {
   if (code[openTagEnd + 1] !== ">" && code[closeTagStart - 1] !== "<") return;
-  throw new Error();
+  throw new Error("Specific error per requirement");
 }
 
 // returns whether the cursor is pointing at the start of an open tag
@@ -177,10 +177,11 @@ function getChildrenFromHTML(html: string): string[] {
         }
         isTagStarted = false;
         openTagName = "";
-        runningTag += getFullTag(html, cursor).tag;
+        const { tag, endIndex } = getFullTag(html, cursor);
+        runningTag += tag;
         children.push(runningTag);
-        cursor = getFullTag(html, cursor).endIndex + 1;
         runningTag = "";
+        cursor = endIndex + 1;
       } else {
         repeatedOpenTagCount--;
         runningTag += html[cursor];
@@ -188,35 +189,37 @@ function getChildrenFromHTML(html: string): string[] {
       }
       continue;
     }
+
     // handle runningTag opens
     if (isOpenTag(html, cursor)) {
+      const { tag, endIndex } = getFullTag(html, cursor);
       if (!isTagStarted) {
         // handle last string child
         if (runningText.length) {
           children.push(runningText);
           runningText = "";
         }
-        openTagName = extractTagName(getFullTag(html, cursor).tag); // set openTagName
+        openTagName = extractTagName(tag); // set openTagName
         isTagStarted = true;
-        runningTag += getFullTag(html, cursor).tag;
-        cursor = getFullTag(html, cursor).endIndex + 1;
+        runningTag += tag;
+        cursor = endIndex + 1;
       } else {
-        const tagName = extractTagName(getFullTag(html, cursor).tag);
+        const tagName = extractTagName(tag);
         if (tagName === openTagName) repeatedOpenTagCount++;
         runningTag += html[cursor];
         cursor++;
       }
       continue;
     }
+
     // handle adding char to runningTag
     if (isTagStarted) {
       runningTag += html[cursor];
-      cursor++;
     } else {
       // handle adding char to runningText
       runningText += html[cursor];
-      cursor++;
     }
+    cursor++;
   }
   if (runningText.length) children.push(runningText); // handle trailing last string child
   return children;
