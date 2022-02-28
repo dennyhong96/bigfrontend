@@ -133,21 +133,21 @@ function isCloseTag(html: string, cursor: number): boolean {
 // returns the full tag(open or close) that starts at a given index, along with the ending index
 function getFullTag(
   html: string,
-  statIndex: number
+  startIndex: number
 ): {
-  tag: string | null;
+  tag: string;
   endIndex: number;
 } {
   let tag = "";
-  while (statIndex < html.length) {
-    const char = html[statIndex];
+  while (startIndex < html.length) {
+    const char = html[startIndex];
     tag += char;
-    if (char === ">") return { tag, endIndex: statIndex };
-    statIndex++;
+    if (char === ">") return { tag, endIndex: startIndex };
+    startIndex++;
   }
   return {
-    tag: null,
-    endIndex: statIndex,
+    tag: "",
+    endIndex: startIndex,
   };
 }
 
