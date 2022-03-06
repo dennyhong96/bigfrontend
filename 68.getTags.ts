@@ -1,23 +1,25 @@
-// Recursive pre-order DFS
-function getTags(tree: Element, tags = new Set<string>()): string[] {
-  tags.add(tree.tagName.toLowerCase());
+// O(n) time; O(n) space; Recursive pre-order DFS
+function getTags(tree: HTMLElement, tagSet: Set<string> = new Set()) {
+  if (!tree) return [];
+  const tagName = tree.tagName.toLowerCase();
+  tagSet.add(tagName);
   for (const child of tree.children) {
-    getTags(child, tags);
+    getTags(child as HTMLElement, tagSet);
   }
-  return Array.from(tags);
+  return [...tagSet]; // or Array.from(tagSet)
 }
 
-// Iterative pre-order DFS
+// O(n) time; O(n) space; Iterative pre-order DFS
 function getTags1(tree: Element) {
-  const tags = new Set<string>();
+  const tagSet = new Set<string>();
   const stack: Element[] = [tree];
   while (stack.length) {
     const node = stack.pop()!;
-    tags.add(node.tagName.toLowerCase());
+    tagSet.add(node.tagName.toLowerCase());
     for (let i = node.children.length - 1; i >= 0; i--) {
       const child = node.children[i];
       stack.push(child);
     }
   }
-  return Array.from(tags);
+  return Array.from(tagSet);
 }

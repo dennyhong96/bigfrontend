@@ -9,17 +9,17 @@ interface MyElement {
 
 type MyNode = MyElement | string;
 
-// FunctionalComponent is a function that receives props and children,
+// FC is a function that receives props and children,
 // when invoked, calls createElement and returns the result MyElement
-type FunctionalComponent = (props: {
+type FC = (props: {
   [key: string]: string | MyNode[];
   children: MyNode[];
 }) => MyElement;
 
 // Creates 'serialized' object representing a DOM structure (MyElement)
 export function createElement(
-  type: string | FunctionalComponent,
-  props: Record<string, string>,
+  type: string | FC,
+  props: { [key: string]: string | MyNode[] },
   ...children: MyNode[]
 ): MyElement {
   // if the type parameter receives a function instead of a string typeName
@@ -66,3 +66,30 @@ export function render(myElement: MyElement) {
 
   return element;
 }
+
+// Example
+const h = createElement;
+
+const Title: FC = ({ children, ...props }) => h("h1", props, ...children);
+const Link: FC = ({ children, ...props }) => h("a", props, ...children);
+const Name: FC = ({ children, ...props }) => h("b", props, ...children);
+const Button: FC = ({ children, ...props }) => h("button", props, ...children);
+const Paragraph: FC = ({ children, ...props }) => h("p", props, ...children);
+const Container: FC = ({ children, ...props }) => h("div", props, ...children);
+
+const myElement = h(
+  Container,
+  {},
+  h(Title, {}, " this is "),
+  h(
+    Paragraph,
+    { className: "paragraph" },
+    " a ",
+    h(Button, {}, " button "),
+    " from ",
+    h(Link, { href: "https://bfe.dev" }, h(Name, {}, "BFE"), ".dev")
+  )
+);
+
+const element = render(myElement);
+console.log(element);

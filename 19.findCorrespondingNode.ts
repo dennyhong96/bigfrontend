@@ -45,7 +45,8 @@ const findCorrespondingNode2 = (
   // get index paths from target to rootA
   const paths: number[] = [];
   while (target !== rootA) {
-    const parent = target.parentElement!;
+    const parent = target.parentElement;
+    if (!parent) break;
     const pathIndex = Array.prototype.indexOf.call(parent.children, target);
     paths.push(pathIndex);
     target = parent;

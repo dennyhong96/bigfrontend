@@ -9,8 +9,10 @@ class Node {
   }
 }
 
+// O(n) time; O(n) space;
 export function serialize(root: Node | null): string {
   const values: string[] = [];
+  // preorder DFS
   const dfs = (root: Node | null) => {
     if (!root) {
       values.push("null");
@@ -24,16 +26,18 @@ export function serialize(root: Node | null): string {
   return values.join(",");
 }
 
+// O(n) time; O(n) space;
 export function deserialize(str: string): Node | null {
   const values = str.split(",");
-  let index = 0;
+  let cursor = 0;
+  // preorder DFS
   const dfs = (): Node | null => {
-    if (values[index] === "null") {
-      index++;
+    if (values[cursor] === "null") {
+      cursor++;
       return null;
     }
-    const root = new Node(Number(values[index]));
-    index++;
+    const root = new Node(Number(values[cursor]));
+    cursor++;
     root.left = dfs();
     root.right = dfs();
     return root;

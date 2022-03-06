@@ -1,35 +1,22 @@
-export function classNames(...args: any): string {
-  args = flatten(args); // Get rid of nested arrays
+export function classNames(...args: any[]) {
+  // get rid of nested arrays first
+  return args
+    .flat(Infinity)
+    .reduce((classes, value) => {
+      if (!value) return classes; // handles skipping falsy values null, undefined, 0, '', false
 
-  const parts: string[] = [];
-
-  args.forEach((arg: any) => {
-    // Handle string and number
-    if (typeof arg === "string" || typeof arg === "number") {
-      parts.push(`${arg}`);
-    }
-
-    // Handle object
-    if (typeof arg === "object" && arg !== null) {
-      for (const key of Object.keys(arg)) {
-        if (!arg[key]) continue;
-        parts.push(key);
+      // handle objects, push key into classes array if value is truthy
+      if (typeof value === "object") {
+        for (const [key, val] of Object.entries(value)) {
+          if (val) classes.push(key);
+        }
+        // handle strings
+      } else if (["string", "number"].includes(typeof value)) {
+        classes.push(value);
       }
-    }
-  });
-
-  return parts.join(" ");
-}
-
-function flatten(arr: any[], result: any = []) {
-  for (const el of arr) {
-    if (Array.isArray(el)) {
-      flatten(el, result);
-    } else {
-      result.push(el);
-    }
-  }
-  return result;
+      return classes;
+    }, [])
+    .join(" ");
 }
 
 // Example

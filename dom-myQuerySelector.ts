@@ -3,7 +3,7 @@ export function myQuerySelector(
   root: HTMLElement | null,
   selector: string
 ): HTMLElement | null {
-  if (!root) return null;
+  if (!root || !selector) return null;
 
   // all modern browsers provides Element.prototype.matches()
   if (root.matches(selector)) return root;

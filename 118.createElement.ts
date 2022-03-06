@@ -42,3 +42,21 @@ export function render(myElement: MyElement): HTMLElement {
 
   return element;
 }
+
+// Example:
+const h = createElement;
+const myElement = h(
+  "div",
+  {},
+  h("h1", {}, " this is "),
+  h(
+    "p",
+    { className: "paragraph" },
+    " a ",
+    h("button", {}, " button "),
+    " from ",
+    h("a", { href: "https://bfe.dev" }, h("b", {}, "BFE"), ".dev")
+  )
+);
+const element = render(myElement);
+console.log(element); // HTMLDivElement
