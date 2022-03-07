@@ -1,13 +1,13 @@
 export async function myFinally<T>(
   promise: Promise<T>,
-  onFinally: (val: T | unknown) => Promise<void>
+  onFinally: () => Promise<void> | void
 ) {
   try {
     const res = await promise;
-    await onFinally(res);
+    await onFinally(); // errors/rejections thrown by onFinally will be caught in catch block
     return res;
   } catch (err) {
-    await onFinally(err);
-    throw err;
+    await onFinally(); // errors/rejections thrown by onFinally will be propagted
+    throw err; // err here is the error thrown from await promise
   }
 }

@@ -1,6 +1,8 @@
-function flat(arr: any[], depth = 1): any {
+type Func = (arr: Array<any>, depth?: number) => Array<any>;
+
+export const flat: Func = function (arr, depth = 1) {
   if (depth === 0) return arr;
-  const result: any[] = [];
+  let result: any[] = [];
   for (const el of arr) {
     if (Array.isArray(el)) {
       result.push(...flat(el, depth - 1));
@@ -9,4 +11,4 @@ function flat(arr: any[], depth = 1): any {
     }
   }
   return result;
-}
+};

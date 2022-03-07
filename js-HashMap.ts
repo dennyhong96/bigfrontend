@@ -23,6 +23,7 @@ export class HashMap<T> {
     }
   }
 
+  // O(n) time; O(n) space; n is number of entries
   public keys(): string[] {
     let keys: string[] = [];
     for (const bucket of this.store) {
@@ -34,6 +35,7 @@ export class HashMap<T> {
     return keys;
   }
 
+  // O(n) time; O(n) space; n is number of entries
   public values(): T[] {
     let values: T[] = [];
     for (const bucket of this.store) {
@@ -45,6 +47,7 @@ export class HashMap<T> {
     return values;
   }
 
+  // O(n) time; O(n) space; n is number of entries
   public entries(): [string, T][] {
     let result: [string, T][] = [];
     for (const bucket of this.store) {

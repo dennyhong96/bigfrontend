@@ -1,23 +1,30 @@
 function any<T>(promises: Promise<T>[]): Promise<T> {
-  let result: T;
-  let errors: any = [];
+  const errors: any[] = [];
+  let rejectedCount = 0;
+  let resolved = false;
+
   return new Promise((resolve, reject) => {
+    if (promises.length === 0) {
+      return reject(
+        new AggregateError("No Promise in Promise.any was resolved")
+      );
+    }
     promises.forEach((promise, index) => {
+      if (!(promise instanceof Promise)) {
+        promise = Promise.resolve(promise);
+      }
       promise
         .then((res) => {
-          if (result) return;
-          result = res;
-          return resolve(result);
+          if (resolved) return;
+          resolved = true;
+          return resolve(res);
         })
         .catch((err) => {
-          if (result) return;
-          errors[index] = err;
-          if (errors.length === promises.length) {
+          if (resolved) return;
+          errors[index] = err; // errors should be in the same order as promises
+          if (++rejectedCount === promises.length) {
             return reject(
-              new AggregateError(
-                "No Promise in Promise.any was resolved",
-                errors
-              )
+              new AggregateError("No Promise in Promise.any was resolved")
             );
           }
         });

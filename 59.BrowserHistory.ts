@@ -1,31 +1,32 @@
 class BrowserHistory {
   private entries: (string | undefined)[];
-  private pointer: number;
+  private cursor: number;
 
+  // The idea is leave the fist index empty when BrowserHistory is initialized without an initial url
   constructor(url?: string) {
     this.entries = [];
-    this.pointer = 0;
-    if (url) this.entries[this.pointer] = url;
+    this.cursor = 0;
+    if (url) this.entries[this.cursor] = url;
   }
 
   public get current(): string | undefined {
-    return this.entries[this.pointer];
+    return this.entries[this.cursor];
   }
 
   public visit(url: string): void {
-    this.entries.length = this.pointer + 1;
+    this.entries.length = this.cursor + 1;
     this.entries.push(url);
-    this.pointer = this.entries.length - 1;
+    this.cursor = this.entries.length - 1;
   }
 
   public goBack(): void {
-    if (this.pointer - 1 < 0) return;
-    this.pointer--;
+    if (this.cursor - 1 < 0) return;
+    this.cursor--;
   }
 
   public forward(): void {
-    if (this.pointer + 1 > this.entries.length - 1) return;
-    this.pointer++;
+    if (this.cursor + 1 > this.entries.length - 1) return;
+    this.cursor++;
   }
 }
 

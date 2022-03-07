@@ -6,25 +6,22 @@
   to attach event listeners directly
  */
 
-type PredicateFn = (el: HTMLElement) => boolean;
+type PredicateFn = (el: Element) => boolean;
 type EventHandlerFn = (e: Event) => void;
 
 // We need this map because we only want to attach one real event listener for the same root
-const rootToHandlersMap = new Map<
-  HTMLElement,
-  [PredicateFn, EventHandlerFn][]
->(); // Map<root, [predicate, handler][]>
+const eventStore = new Map<Element, [PredicateFn, EventHandlerFn][]>(); // Map<root, [predicate, handler][]>
 
 export function onClick(
-  root: HTMLElement,
+  root: Element,
   predicate: PredicateFn,
   handler: EventHandlerFn
 ) {
-  if (rootToHandlersMap.has(root)) {
-    rootToHandlersMap.get(root)!.push([predicate, handler]);
+  if (eventStore.has(root)) {
+    eventStore.get(root)!.push([predicate, handler]);
     return;
   }
-  rootToHandlersMap.set(root, [[predicate, handler]]);
+  eventStore.set(root, [[predicate, handler]]);
 
   // Only attach one real event listener to the same root element
   root.addEventListener("click", function (evt) {
@@ -43,14 +40,16 @@ export function onClick(
 
     // traverse from event target to root
     // try every element in between with the predicates, invoke hanlders when matching
-    let element = evt.target as HTMLElement | null;
+    let element = evt.target as Element | null;
     while (element) {
       // The order of handlers being attached to root is the order the handlers
       // are being called
-      for (const [predicate, handler] of rootToHandlersMap.get(root)!) {
-        if (predicate(element as HTMLElement)) {
+      for (const [predicate, handler] of eventStore.get(root)!) {
+        if (predicate(element)) {
           handler.call(element, evt);
           if (isImmediatePropagationStopped) break;
+          // If several listeners are attached to the same element for the same event type, they are called in the order in which they were added.
+          // If stopImmediatePropagation() is invoked during one such call, no remaining listeners will be called.
         }
       }
       if (element === root || isPropagationStopped) break;

@@ -1,18 +1,17 @@
 function race<T>(promises: Promise<T>[]): Promise<T> {
-  let result: T;
-  let error: any;
+  let finished = false;
   return new Promise((resolve, reject) => {
     promises.forEach((promise) => {
       promise
         .then((res) => {
-          if (result || error) return;
-          result = res;
-          return resolve(result);
+          if (finished) return;
+          finished = true;
+          return resolve(res);
         })
         .catch((err) => {
-          if (result || error) return;
-          error = err;
-          return reject(error);
+          if (finished) return;
+          finished = true;
+          return reject(err);
         });
     });
   });

@@ -1,58 +1,28 @@
-export function myInstanceOf(instance: any, TargetClass: Function): boolean {
-  // instance is null when new Object().__proto__.__proto__ is passed in
-  if (!instance || typeof instance !== "object") return false;
-
+// The idea is to keep traversing up instance object's prototype chain (__proto__)
+// and try to test if it links to the TargetClass's prototype
+function myInstanceOf(instance: any, TargetClass: Function): boolean {
   if (!TargetClass.prototype) {
-    throw new Error("TargetClass is not a class nor a constructor function");
+    throw new Error(
+      "TargetClass is neither a class nor a Constructor Function"
+    );
   }
 
-  // An instance's __proto__ is the Class/Constructor's prototype
-  if (instance.__proto__ === TargetClass.prototype) return true;
+  // Object.prototype.__proto__ is null
+  if (!instance || typeof instance !== "object") return false;
+  if (instance === TargetClass.prototype) return true;
 
+  // An instance's __proto__ links to it's Class/Constructor's prototype
+  // A Class/Constructor prototype's __proto__ links to the prototype of the Class/Constructor it extends
   return myInstanceOf(instance.__proto__, TargetClass);
 }
 
 /*
-function A(name) {
-  this.name = name;
-}
-A.prototype.eat = function () {
-  console.log("eat");
-};
+class A {}
+class B extends A {} // same as doing B.__proto__ = A.prototype
+const b = new B();
 
-function B(gender) {
-  this.gender = gender;
-}
-B.prototype.drink = function () {
-  console.log("drink");
-};
-B.prototype.__proto__ = A.prototype; // Class B extends A {}
-
-class A {
-  constructor(name) {
-    this.name = name;
-  }
-  eat() {
-    console.log('eat')
-  }
-}
-class B extends A {
-  constructor(gender) {
-    super();
-    this.gender = gender;
-  }
-  drink() {
-    console.log('drink')
-  }
-}
-
-const a = new A("denny");
-console.log(a.__proto__ === A.prototype); // true
-console.log(a.__proto__.__proto__ === Object.prototype); // true
-console.log(a.__proto__.constructor === A); // true
-
-const b = new B("male");
-console.log(b.__proto__ === B.prototype); // true
-console.log(b.__proto__.__proto__ === A.prototype); // true
-console.log(b.__proto__.constructor === B); // true
+b.__proto__ -> B.prototype
+b.__proto__.__proto__ -> A.prototype
+b.__proto__.__proto__.__proto__ -> Object.prototype
+b.__proto__.__proto__.__proto__.__proto__ -> null
 */

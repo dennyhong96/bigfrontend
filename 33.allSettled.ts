@@ -6,15 +6,17 @@ function allSettled(
   promises: (any | Promise<any>)[]
 ): Promise<AllSettedResult[]> {
   const results: AllSettedResult[] = [];
-  let resultCount = 0;
+  let resultsCount = 0; // we need a counter, cannot use results.length, becuase it could be sparse
+
   return new Promise((resolve) => {
-    if (!promises.length) return resolve([]);
+    if (!promises.length) return resolve([]); // promises array is empty, resolve with an empty array
+
     const checkIfFinished = () => {
-      resultCount++;
-      if (resultCount === promises.length) {
-        return resolve(results);
+      if (++resultsCount === promises.length) {
+        return resolve(results); // resolve when we have collected all of the results
       }
     };
+
     promises.forEach((promise, index) => {
       if (!(promise instanceof Promise)) {
         promise = Promise.resolve(promise);
@@ -24,14 +26,14 @@ function allSettled(
           results[index] = {
             status: "fulfilled",
             value: res,
-          };
+          }; // results should be in the same order as promises
           checkIfFinished();
         })
         .catch((err: any) => {
           results[index] = {
             status: "rejected",
             reason: err,
-          };
+          }; // results should be in the same order as promises
           checkIfFinished();
         });
     });

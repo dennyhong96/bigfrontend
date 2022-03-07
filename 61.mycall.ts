@@ -6,12 +6,11 @@ type FunctionExtended = Function & {
   thisArg: any,
   ...args: any[]
 ) {
-  thisArg = Object(thisArg ?? window); // Objectify primitive types
-  thisArg = Object(thisArg);
-  const func = Symbol(); // unique prop name
-  thisArg[func] = this; // this is the function we want to call
-  const res = thisArg[func](...args);
-  delete thisArg[func]; // do not alter the thisArg
+  thisArg = Object(thisArg ?? window); // wrap primitive values, if none passed in, use window
+  const funcKey = Symbol(); // unique prop name to prevent func prop name conflict with thisArg's prop names
+  thisArg[funcKey] = this; // this is the function we want to call
+  const res = thisArg[funcKey](...args);
+  delete thisArg[funcKey]; // do not alter the thisArg
   return res;
 };
 

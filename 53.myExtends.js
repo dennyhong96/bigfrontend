@@ -14,29 +14,30 @@
  */
 
 const myExtends = (SuperType, SubType) => {
-  function ExtendType(...args) {
-    // When constructor funciton is called with new, `this` will be created as a new object automatically - new MyFunc()
-    // When called without new, `this` points to whichever object that called this function - MyFunc,call(a), `this` points to `a`
+  function Inherited(...args) {
+    // Call SuperType and SubType in this order
+    // SuperType will set it's instance instance prop value pairs into `this`
+    // Then SubType will set it's instance prop value pairs into `this`
+    // SubType prop value pairs can overwrite those set from SuperType if prop name are the same
     SuperType.call(this, ...args);
     SubType.call(this, ...args);
-
-    // Either do this line below, or do ExtendType.prototype = SubType.prototype;
-    // Object.setPrototypeOf(this, SubType.prototype); // or this.__proto__ = SubType.prototype;
   }
+  // Makes Inherited's instances' __proto__ links to SubType.prototype
+  // So Inherited's instances' can use methods on SubType.prototype
+  Inherited.prototype = SubType.prototype;
+  // Makes  SubType.prototype's __proto__ links to SuperType.prototype
+  // So Inherited's instances' can use methods on SuperType.prototype
+  Inherited.prototype.__proto__ = SuperType.prototype;
 
-  // This line below assigns SubType.prototype to all instances of objects created with new ExtendType()
-  ExtendType.prototype = SubType.prototype; // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain
+  // Makes Inherited class' __proto__ links to SuperType class
+  // So Inherited class have acess to SuperType class's static members
+  Inherited.__proto__ = SuperType;
 
-  // Setup link between SubType.prototype and SuperType.prototype
-  Object.setPrototypeOf(SubType.prototype, SuperType.prototype); // SubType.prototype.__proto__ = SuperType.prototype;
+  // Makes SuperType class' __proto__ links to SubType class
+  // So Inherited class have acess to SubType class's static members
+  Inherited.__proto__.__proto__ = SubType;
 
-  // Set up link between SuperType and SubType, so SuperType inherits SubType's static members
-  Object.setPrototypeOf(SuperType, SubType); // SuperType.__proto__ = SubType;
-
-  // Set up link betwen ExtendType and SuperType, so ExtendType inherits SuperType's static members
-  Object.setPrototypeOf(ExtendType, SuperType); // ExtendType.__proto__ = SuperType;
-
-  return ExtendType;
+  return Inherited;
 };
 
 // Example

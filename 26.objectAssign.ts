@@ -1,57 +1,34 @@
-function objectAssign(target: any, ...sources: any[]): object {
+function objectAssign(target: any, ...sources: any[]): any {
+  // Should throw error when target is null or undefined
   if (target === null || target === undefined) {
     throw new Error("Target cannot be null or undefined");
   }
-  // Number, String and Boolean target are wrapped
-  if (["number", "string", "boolean"].includes(typeof target)) {
+
+  // Should wrap string, boolean, and number target
+  if (["string", "boolean", "number"].includes(typeof target)) {
     target = Object(target);
   }
+
+  // Loop through every source
   for (const source of sources) {
-    if (source === null || source === undefined) continue;
+    if (source === null || source === undefined) continue; // skip null and undefined sources
+
+    // Loop throught every enumerable key value pairs
     const keys = [
-      ...Object.keys(source), // symbol keys are omitted when iterated, need to use Object.getOwnPropertySymbols
-      ...Object.getOwnPropertySymbols(source).filter(
-        (symbolKey) =>
-          Object.getOwnPropertyDescriptor(source, symbolKey)!.enumerable
-      ),
+      ...Object.keys(source), // handle string enumerable keys
+      ...Object.getOwnPropertySymbols(source), // Symbold properties can also be enumerable
     ];
     for (const key of keys) {
-      // check if a prop is writable
-      const propDescriptor = Object.getOwnPropertyDescriptor(target, key); // returns an object describing the configuration of a specific property on a given object
-      if (propDescriptor && !propDescriptor.writable) {
-        throw new Error(`Target property "${String(key)}" is not writable`);
+      // The key might be already on the target, we need to overwrite it with new value
+      // need to check if key in target is writable, it might now be wriatble when created through Object.defineProperty or Object.create
+      const keyDescriptor = Object.getOwnPropertyDescriptor(target, key);
+      if (keyDescriptor && !keyDescriptor.writable) {
+        throw new Error(`Target property ${key.toString()} is not writable.`);
       }
+
+      // Set key value pairs on target
       target[key] = source[key];
     }
   }
   return target;
 }
-
-function objectAssign2(target: any, ...sources: any[]): object {
-  if (target === null || target === undefined) {
-    throw new Error("Target cannot be null or undefined");
-  }
-  // Number, String and Boolean target are wrapped
-  if (["number", "string", "boolean"].includes(typeof target)) {
-    target = Object(target);
-  }
-  for (const source of sources) {
-    if (source === null || source === undefined) continue;
-    const keys = [
-      ...Object.keys(source), // symbol keys are omitted when iterated, need to use Object.getOwnPropertySymbols
-      ...Object.getOwnPropertySymbols(source).filter(
-        (symbolKey) =>
-          Object.getOwnPropertyDescriptor(source, symbolKey)!.enumerable
-      ),
-    ];
-    for (const key of keys) {
-      // Reflect.set sets the prop with value, returns false if the prop is not writable, returns true when successful
-      if (!Reflect.set(target, key, source[key])) {
-        throw new Error(`Target property "${String(key)}" is not writable`);
-      }
-    }
-  }
-  return target;
-}
-
-export {};
