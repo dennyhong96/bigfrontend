@@ -2,6 +2,9 @@ type FunctionExtended = Function & {
   mycall: (thisArg: any, ...args: any[]) => any;
 };
 
+// The idea is to put the funciton into the context object as a method
+// that way when we call context[funcKey] the `this` points the context object
+// we need to wrap primitives into an object, or use window when no context passed in
 (Function.prototype as FunctionExtended).mycall = function (
   thisArg: any,
   ...args: any[]
