@@ -14,8 +14,7 @@ export function nextRightSibling(
 
   // If the parent right sibling has a firstElementChild, that is the result
   // otherwise, keep finding one that has a firstElementChild recursively
-  while (parent) {
-    if (parent === root) break; // we can't go furthur up than root
+  while (parent && parent !== root /* we can't go furthur up than root */) {
     parent = nextRightSibling(root, parent);
     if (parent?.firstElementChild)
       return parent.firstElementChild as HTMLElement;

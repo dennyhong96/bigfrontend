@@ -12,8 +12,7 @@ export function previousLeftSibling(
 
   // If the parent left sibling has a lastElementChild, that is the result
   // otherwise, keep finding one that has a lastElementChild recursively
-  while (parent) {
-    if (parent === root) break; // we can't go furthur up than root
+  while (parent && parent !== root /* we can't go furthur up than root */) {
     parent = previousLeftSibling(root, parent);
     if (parent?.lastElementChild) return parent.lastElementChild;
   }
