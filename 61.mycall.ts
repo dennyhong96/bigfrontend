@@ -9,12 +9,18 @@ type FunctionExtended = Function & {
   thisArg: any,
   ...args: any[]
 ) {
-  thisArg = Object(thisArg ?? window); // wrap primitive values, if none passed in, use window
-  const funcKey = Symbol(); // unique prop name to prevent func prop name conflict with thisArg's prop names
-  thisArg[funcKey] = this; // this is the function we want to call
-  const res = thisArg[funcKey](...args);
-  delete thisArg[funcKey]; // do not alter the thisArg
-  return res;
+  if (thisArg === null || thisArg === undefined) thisArg = window;
+  if (typeof thisArg !== "object") thisArg = Object(thisArg);
+  const funcKey = Symbol();
+  thisArg[funcKey] = this;
+  const invocationResult = thisArg[funcKey](...args);
+  delete thisArg[funcKey];
+  return invocationResult;
+  // 1. need to assign the func(this) as a method of the thisArg object
+  // 2. if no thisArg provided, need to default to the window object
+  // 3. so when we invoke the func, this `this` context points to the thisArg
+  // 4. we need to be able to delete the func from thisArg later
+  // 5. so we need a unique key - create a Symbol
 };
 
 // Example
