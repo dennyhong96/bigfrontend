@@ -24,33 +24,27 @@ getAPIWithMerging.clearCache = () => {
 };
 
 function generateHash(path: string, config: object): string {
-  return `${path}${hashConfig(config)}`;
+  return `${path}::${serialize(config)}`;
 }
 
-function hashConfig(config: any): string {
-  switch (Object.prototype.toString.call(config)) {
-    case "[object Null]": {
-      return "null";
-    }
-    case "[object Undefined]": {
-      return "undefined";
-    }
-    case "[object String]":
-    case "[object Number]":
-    case "[object Boolean]": {
-      return `${config}`;
-    }
-    case "[object Array]": {
-      return `[${config.map((el: any) => hashConfig(el)).join(",")}]`;
-    }
-    case "[object Object]": {
-      return `{${Object.keys(config)
-        .sort()
-        .map((key) => `${key}:${hashConfig(config[key])}`)
-        .join(",")}}`;
-    }
-    default: {
-      return "";
-    }
+const serialize = (config: any): string => {
+  // Handle primitives
+  if (
+    ["string", "number", "boolean"].includes(typeof config) ||
+    config === undefined ||
+    config === null
+  ) {
+    return `${config}`;
   }
-}
+
+  // Handle array
+  if (Array.isArray(config)) {
+    return `[${config.map((el) => serialize(el)).join(",")}]`;
+  }
+
+  // use sort to ignore object entry order in config
+  return `{${Object.keys(config)
+    .sort()
+    .map((key) => `${key}:${serialize(config[key])}`)
+    .join(",")}}`;
+};

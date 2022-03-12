@@ -4,12 +4,9 @@ async function fetchWithAutoRetry(
 ): Promise<any> {
   try {
     return await fetcher();
-  } catch (error) {
-    if (maximumRetryCount > 0) {
-      return await fetchWithAutoRetry(fetcher, maximumRetryCount - 1);
-    } else {
-      throw error;
-    }
+  } catch (err) {
+    if (maximumRetryCount <= 0) throw err;
+    return fetchWithAutoRetry(fetcher, maximumRetryCount - 1);
   }
 }
 

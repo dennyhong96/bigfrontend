@@ -1,6 +1,8 @@
 // Start from target, traverse upwards and collect every element's selector untill it reaches root
 // O(h) time; O(h) space;
 export function generateSelector(root: Element, target: Element): string {
+  // what happen if no selector is found? just return empty ''
+
   let selectors: string[] = [];
 
   let currElement: Element | null = target;
@@ -17,6 +19,8 @@ export function generateSelector(root: Element, target: Element): string {
 // Use recursive DFS to collect selectors of every element on the path from root to target
 // O(n) time; O(h) space;
 export function generateSelector1(root: Element, target: Element): string {
+  // what happen if no selector is found? just return empty ''
+
   const selectors: string[] = [];
 
   const collectSelectors = (root: Element): boolean => {

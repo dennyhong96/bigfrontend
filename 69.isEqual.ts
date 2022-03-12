@@ -1,4 +1,28 @@
 function isEqual(a: any, b: any, compared = new Map<any, any>()): boolean {
+  if (a === b) return true; // handle primitives, and reference equality
+
+  if (typeof a !== "object" || typeof b !== "object") return false;
+
+  // handle circular reference
+  if (compared.has(a) && compared.get(a) === b) return true;
+  compared.set(a, b);
+
+  // compare each key and value of the object/array recursively
+  const aKeys = Object.keys(a);
+  const bKeys = Object.keys(b);
+  if (aKeys.length !== bKeys.length) return false;
+  for (let i = 0; i < aKeys.length; i++) {
+    const akey = aKeys[i];
+    const bKey = bKeys[i];
+    const aVal = a[akey];
+    const bVal = b[bKey];
+    if (!isEqual(akey, bKey, compared) || !isEqual(aVal, bVal, compared))
+      return false;
+  }
+  return true;
+}
+
+function isEqual2(a: any, b: any, compared = new Map<any, any>()): boolean {
   // console.log(a, b, new Map(compared));
   if (
     typeof a === "object" &&

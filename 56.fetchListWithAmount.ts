@@ -41,12 +41,10 @@ const fetchListWithAmount1 = async (
 ): Promise<IItem[]> => {
   if (results.length === amount) return results;
   if (results.length > amount) return results.slice(0, amount);
-  if (results.length < amount) {
-    const id: number | undefined = results[results.length - 1]?.id;
-    const { items } = await fetchList(id);
-    if (!items.length) return results;
-    results.push(...items);
-  }
+  const id: number | undefined = results[results.length - 1]?.id;
+  const { items } = await fetchList(id);
+  if (!items.length) return results;
+  results.push(...items);
   return await fetchListWithAmount1(amount, results);
 };
 

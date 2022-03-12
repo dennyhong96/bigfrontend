@@ -30,7 +30,9 @@ function nextRightSibling1(root: HTMLElement, target: HTMLElement) {
     const len = queue.length;
     for (let i = 0; i < len; i++) {
       const node = queue.shift()!;
-      if (node === target) return queue[0] ?? null;
+      if (i < len - 1 && node === target) {
+        return queue[0];
+      }
       for (const child of node.children) {
         queue.push(child as HTMLElement);
       }
