@@ -24,6 +24,8 @@ export function set(
         obj[currPath] = _set({}, path, value); // next path is a string obejct key, create an empty object
       }
     } else {
+      // handle cases for setting a value on props nested inside a existing prop: _set({a:{b:3}}, ['a','b'])
+      // handles base case for setting a value on a non-existing prop: _set(undefined, [])
       obj[currPath] = _set(obj[currPath], path, value);
     }
 

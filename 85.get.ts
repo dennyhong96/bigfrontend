@@ -1,29 +1,27 @@
 export function get(
   source: Record<any, any>,
-  path: string | string[],
+  path: string | (number | string)[],
   defaultValue: any = undefined
 ): any {
-  if (typeof source !== "object" || source === null) return defaultValue;
+  path = Array.isArray(path) ? path : path.split(/\.|\[|\]/g).filter(Boolean);
+  path = path.map(transformKey);
+  if (!path.length) return defaultValue; // if path is initially empty, need to return defaultValue
 
-  // Normalize path into an array
-  if (typeof path === "string") {
-    if (!path.length) return defaultValue;
-    path = path.split(/[\.\[\]]/g).filter(Boolean); // ['a', 'b', 'c', '2']
-    if (!path.length) return defaultValue;
-  }
-
-  // Recursively get the result
-  const currPath = path.shift()!;
-  const value = source[currPath];
-  if (value !== undefined) {
-    if (path.length === 0) {
-      return value;
-    } else {
-      return get(value, path, defaultValue);
+  const _get = (source: Record<any, any>, path: (number | string)[]): any => {
+    if (!path.length) return source;
+    const currPath = path.shift()!;
+    if (source[currPath]) {
+      return _get(source[currPath], path); // currPath exists in source, keep finding with rest paths
     }
-  } else {
-    return defaultValue;
-  }
+    return defaultValue; // cannot find a result, use default value
+  };
+  return _get(source, path);
+}
+
+function transformKey(p: string | number): string | number {
+  if (typeof p === "number" || !isFinite(Number(p))) return p;
+  if (p.length > 1 && p.startsWith("0")) return p;
+  return Number(p);
 }
 
 // Example
