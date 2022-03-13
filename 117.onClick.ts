@@ -49,7 +49,7 @@ export function onClick(
           handler.call(element, evt);
           if (isImmediatePropagationStopped) break;
           // If several listeners are attached to the same element for the same event type, they are called in the order in which they were added.
-          // If stopImmediatePropagation() is invoked during one such call, no remaining listeners will be called.
+          // If stopImmediatePropagation() is invoked during one such call, we don't want other handlers called on this target with 'click' event
         }
       }
       if (element === root || isPropagationStopped) break;

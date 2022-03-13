@@ -3,8 +3,7 @@ export function set(
   path: string | (string | number)[],
   value?: any
 ) {
-  path = Array.isArray(path) ? path : path.split(/\.|\[|\]/g).filter(Boolean);
-  path = path.map(transformPath);
+  path = transformPath(path);
 
   // set properties on the passed in object and return it
   const _set = (
@@ -34,9 +33,13 @@ export function set(
   return _set(obj, path, value);
 }
 
-function transformPath(p: string | number): string | number {
-  if (typeof p === "number" || !isFinite(Number(p))) return p; // "01" sould not be transformed into a index
-  return p.length > 1 && p.startsWith("0") ? p : Number(p);
+function transformPath(path: string | (string | number)[]) {
+  path = Array.isArray(path) ? path : path.split(/\.|\[|\]/g).filter(Boolean);
+  return path.map((p) => {
+    if (typeof p === "number" || !isFinite(Number(p))) return p;
+    if (p.length > 1 && p.startsWith("0")) return p;
+    return Number(p);
+  });
 }
 
 // Example

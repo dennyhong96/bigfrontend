@@ -7,9 +7,14 @@ function cloneDeep<T extends { [key in any]: any }>(
     // null is of type object
     data === null ||
     // Handle primitive types wrapper Object
-    ["[object string]", "[object number]", "[object boolean]"].includes(
-      Object.prototype.toString.call(data)
-    )
+    [
+      "[object Number]",
+      "[object String]",
+      "[object Boolean]",
+      "[object Symbol]",
+      "[object BigInt]",
+      "[object Undefined]",
+    ].includes(Object.prototype.toString.call(data))
   ) {
     return data;
   }

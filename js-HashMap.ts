@@ -1,5 +1,5 @@
 export class HashMap<T> {
-  private data: Array<Array<[string, T]>>;
+  private data: Array<Array<[string, T]>>; // or { [key: number]: [string, T][] }
 
   constructor() {
     this.data = [];
