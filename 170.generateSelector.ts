@@ -6,8 +6,7 @@ export function generateSelector(root: Element, target: Element): string {
   let selectors: string[] = [];
 
   let currElement: Element | null = target;
-  while (currElement) {
-    if (currElement === root) break;
+  while (currElement && currElement !== root) {
     const selector = getElementSelector(currElement);
     selectors.unshift(selector);
     currElement = currElement.parentElement;
