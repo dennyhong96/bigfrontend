@@ -13,7 +13,7 @@ const myNew = (
   // context.__proto__ = constructor.prototype
 
   const res = constructor.call(context, ...args);
-  if (res !== undefined) return res; // if constructor returns something, return that
+  if (typeof res === "object" && res !== null) return res; // if constructor returns an object, return it. Other primitive returns are ignored
 
   // Otherwise, return the context
   return context;

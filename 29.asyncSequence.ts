@@ -2,35 +2,34 @@ type Callback<T> = (error: Error | undefined, data: T | undefined) => void;
 
 type AsyncFunc<T> = (callback: Callback<T>, data: T) => void;
 
-function sequence<T>(funcs: Array<AsyncFunc<T>>) {
-  const funcsCopy = [...funcs];
+function sequence<T>(asyncFns: Array<AsyncFunc<T>>) {
   return function (finalCallback: Callback<T>, initialData: T) {
     const callback: Callback<T> = (error, nextData) => {
       if (error) return finalCallback(error, undefined);
-      runNextFunc(nextData!);
+      runNextAsyncFn(nextData!);
     };
-    const runNextFunc = (data: T) => {
-      if (!funcsCopy.length) return finalCallback(undefined, data);
-      const nextFunc = funcsCopy.shift()!;
+    const runNextAsyncFn = (data: T) => {
+      if (!asyncFns.length) return finalCallback(undefined, data);
+      const nextFunc = asyncFns.shift()!;
       nextFunc(callback, data);
     };
-    runNextFunc(initialData);
+    runNextAsyncFn(initialData);
   };
 }
 
-function sequencePromise<T>(funcs: Array<AsyncFunc<T>>) {
+function sequencePromise<T>(asyncFns: Array<AsyncFunc<T>>) {
   return function (finalCallback: Callback<T>, initialData: T) {
-    const promisify = (fn: AsyncFunc<T>, data: T): Promise<T> => {
+    const promisify = (asyncFn: AsyncFunc<T>, data: T): Promise<T> => {
       return new Promise((resolve, reject) => {
-        fn((error, newData) => {
+        asyncFn((error, nextData) => {
           if (error) return reject(error);
-          resolve(newData!);
+          resolve(nextData!);
         }, data);
       });
     };
-    const finalPromise = funcs.reduce((acc, currFunc) => {
-      return acc.then((newData) => {
-        return promisify(currFunc, newData);
+    const finalPromise = asyncFns.reduce((dataPromise, asyncFn) => {
+      return dataPromise.then((nextData) => {
+        return promisify(asyncFn, nextData);
       });
     }, Promise.resolve(initialData));
     finalPromise

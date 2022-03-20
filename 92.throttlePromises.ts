@@ -1,11 +1,12 @@
 export async function throttlePromises(
   funcs: ((...args: any[]) => Promise<any>)[],
-  max: number
+  max: number,
+  results: any[] = []
 ): Promise<any[]> {
-  if (!funcs.length) return [];
-  const batch = funcs.slice(0, max);
+  if (!funcs.length) return results;
+  const currBatch = funcs.slice(0, max);
   const nextBatch = funcs.slice(max);
-  const batchRes = await Promise.all(batch.map((f) => f())); // turn funcs into promises
-  const nextBatchRes = await throttlePromises(nextBatch, max);
-  return [...batchRes, ...nextBatchRes];
+  const batchResult = await Promise.all(currBatch.map((func) => func()));
+  results.push(...batchResult);
+  return await throttlePromises(nextBatch, max, results);
 }
