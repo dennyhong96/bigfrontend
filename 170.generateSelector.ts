@@ -22,17 +22,17 @@ export function generateSelector1(root: Element, target: Element): string {
 
   const selectors: string[] = [];
 
-  const collectSelectors = (root: Element): boolean => {
-    if (root === target) return true; // returns whether we found the target on this path
+  const collectSelectors = (root: Element): Element | null => {
+    if (root !== target && root === target) return root; // returns whether we found the target on this path
     for (const child of root.children) {
       const found = collectSelectors(child);
       if (found) {
-        const selector = getElementSelector(child);
+        const selector = getElementSelector(found);
         selectors.unshift(selector); // unshift because we are inserting element selectors closer to target first
-        return true;
+        return root;
       }
     }
-    return false;
+    return null;
   };
   collectSelectors(root);
 
