@@ -1,5 +1,6 @@
 type FunctionExtended = Function & {
   mycall: (thisArg: any, ...args: any[]) => any;
+  myBind: (thisArg: any, ...args: any[]) => (...args: any[]) => void;
 };
 
 // The idea is to put the funciton into the context object as a method
@@ -21,6 +22,19 @@ type FunctionExtended = Function & {
   // 3. so when we invoke the func, this `this` context points to the thisArg
   // 4. we need to be able to delete the func from thisArg later
   // 5. so we need a unique key - create a Symbol
+};
+
+(Function.prototype as FunctionExtended).myBind = function (
+  thisArg: any,
+  ...args: any[]
+) {
+  if (thisArg === null || thisArg === undefined) thisArg = window;
+  if (typeof thisArg !== "object") thisArg = Object(thisArg);
+  const funcKey = Symbol();
+  thisArg[funcKey] = this;
+  return function (...moreArgs) {
+    return thisArg[funcKey](...args, ...moreArgs);
+  };
 };
 
 // Example
